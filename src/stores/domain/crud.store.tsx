@@ -20,7 +20,24 @@ export default class CrudStore<TEntity, TId, TService extends CrudService<TEntit
     service: TService;
 
     constructor(rootStore: RootStore, service: TService){
+        this.rootStore = rootStore;
         this.service = service;
+    }
+
+    @action
+    reset(resetFor: "entity" | "entities" = null){
+        if(!resetFor) {
+            this.entities = [];
+            this.entity = null;
+        } else {
+            resetFor === "entity" && (this.entity = null);
+            resetFor === "entities" && (this.entities = []);
+        }
+    }
+
+    @action
+    setEntity(entity: TEntity){
+        this.entity = entity;
     }
 
     @observable entities: TEntity[] = [];
@@ -34,7 +51,7 @@ export default class CrudStore<TEntity, TId, TService extends CrudService<TEntit
 
     @action setNullEntities(): void { this.entities = null;}
     
-    onFetch?(entities: TEntity[]);
+    onFetch?(entities: TEntity);
     onUpdate?(entity: TEntity, state: CrudState, isError: boolean);
     
     @action
@@ -46,7 +63,6 @@ export default class CrudStore<TEntity, TId, TService extends CrudService<TEntit
         this.service.getAll(query).subscribe(
             result => {
                 runInAction(() => {
-                    this.onFetch && this.onFetch(result);
                     if(refresh)
                         this.entities = result;
                     else
@@ -94,6 +110,7 @@ export default class CrudStore<TEntity, TId, TService extends CrudService<TEntit
             result => {
                 runInAction(() => {
                     this.entity = result;
+                    this.onFetch && this.onFetch(result);
                     this.state = CrudState.Done;
                 })
             },

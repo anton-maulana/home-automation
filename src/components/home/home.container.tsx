@@ -64,6 +64,10 @@ export default class HomeContainer extends React.Component<HomeProps> {
         this.props.roomStore.createOrUpdate(model, true);
     }
 
+    navigate(item: Room){
+        this.props.navigation.navigate("Detail", {id: item.id});
+    }
+
     render() {
         let { entities, state, isLoading, onLoading } = this.props.roomStore;
         return (
@@ -87,7 +91,7 @@ export default class HomeContainer extends React.Component<HomeProps> {
                     onPress={() => this.setState({ active: !this.state.active })}>
                     <Icon name="share" />
                 </Fab> */}
-                {entities !== null && entities.length !== 0 ?
+                {state !== CrudState.Fetching && entities !== null && entities.length !== 0 ?
                     <FlatList
                         data={entities}
                         refreshing={state === CrudState.Refreshing}
@@ -106,7 +110,7 @@ export default class HomeContainer extends React.Component<HomeProps> {
                         renderItem={({ item, index }) =>
                             <ListItem icon key={item.id}>
                                 <Body>
-                                    <Button hasText transparent onPress={() => this.props.navigation.navigate("Detail")}>
+                                    <Button hasText transparent onPress={() => this.navigate(item)}>
                                         <Text>{item.name}</Text>
                                     </Button>
                                 </Body>
@@ -121,7 +125,16 @@ export default class HomeContainer extends React.Component<HomeProps> {
 
                     :
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", alignSelf: "center" }}>
+                        {isLoading ? 
+                        <React.Fragment>
+                            <Text>Downloading Data</Text>
+                            <Spinner size="small" /> 
+
+                        </React.Fragment> :
                         <Text>No Data Available</Text>
+                        
+                        }
+                        
                     </View>
                 }
 

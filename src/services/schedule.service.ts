@@ -5,10 +5,10 @@ import { Observable, from, Subscriber } from 'rxjs';
 import urljoin from 'url-join';
 import { Query } from '../models/query';
 import { RequestHelper } from '../helpers/request.helper';
-import { Room } from '../models/room';
+import { Schedule } from '../models/schedule';
 import { CrudService } from './crud';
 
-export class RoomService implements CrudService<Room, number> {        
+export class ScheduleService implements CrudService<Schedule, number> {        
 
     token: string;
 
@@ -16,9 +16,9 @@ export class RoomService implements CrudService<Room, number> {
         this.token = token;
     }
     
-    public getAll(query?: Query): Observable<Array<Room>> { 
+    public getAll(query?: Query): Observable<Array<Schedule>> { 
         let request = RequestHelper.getRequest(
-            urljoin(Config.serverUrl, 'room'),            
+            urljoin(Config.serverUrl, 'schedule'),            
             'GET',
             null,
             query,
@@ -31,7 +31,7 @@ export class RoomService implements CrudService<Room, number> {
 
     public count(query?: Query): Observable<number> { 
         let request = RequestHelper.getRequest(
-            urljoin(Config.serverUrl, 'room', 'count'),            
+            urljoin(Config.serverUrl, 'schedule', 'count'),            
             'GET',
             null,
             query,
@@ -42,9 +42,9 @@ export class RoomService implements CrudService<Room, number> {
         );
     }
 
-    public getById(id: number, query?: Query): Observable<Room> {
+    public getById(id: number, query?: Query): Observable<Schedule> {
          let request = RequestHelper.getRequest(
-            urljoin(Config.serverUrl, 'room', id.toString()),            
+            urljoin(Config.serverUrl, 'schedule', id.toString()),            
             'GET',
             null,
             query,
@@ -55,7 +55,7 @@ export class RoomService implements CrudService<Room, number> {
         );
     }
 
-    public createOrUpdate(model: Room): Observable<number> {
+    public createOrUpdate(model: Schedule): Observable<number> {
         if (!model['id']) {
             return this.create(model);
         } else if (model['id']) {
@@ -63,9 +63,9 @@ export class RoomService implements CrudService<Room, number> {
         }
     }
 
-    public create(model: Room): Observable<number> {
+    public create(model: Schedule): Observable<number> {
         let request = RequestHelper.getRequest(
-            urljoin(Config.serverUrl, 'room'),            
+            urljoin(Config.serverUrl, 'schedule'),            
             'POST',
             model,
             null,
@@ -76,9 +76,9 @@ export class RoomService implements CrudService<Room, number> {
         );
     }
 
-    public update(model: Room): Observable<number> {
+    public update(model: Schedule): Observable<number> {
         let request = RequestHelper.getRequest(
-            urljoin(Config.serverUrl, 'room'),            
+            urljoin(Config.serverUrl, 'schedule'),            
             'PUT',
             model,
             null,
@@ -91,7 +91,7 @@ export class RoomService implements CrudService<Room, number> {
 
     public deleteById(id: any): Observable<number> {
         let request = RequestHelper.getRequest(
-            urljoin(Config.serverUrl, 'room', id.toString()),            
+            urljoin(Config.serverUrl, 'schedule', id.toString()),            
             'DELETE',
             null,
             null,
@@ -101,4 +101,17 @@ export class RoomService implements CrudService<Room, number> {
             map(res => res.response)
         );
     }
+
+    public getByRoomId(id: number, query?: Query): Observable<Schedule> {
+        let request = RequestHelper.getRequest(
+           urljoin(Config.serverUrl, 'schedule',"room-id", id.toString()),            
+           'GET',
+           null,
+           query,
+       );
+       
+       return ajax(request).pipe(
+           map(res => res.response)
+       );
+   }
 }

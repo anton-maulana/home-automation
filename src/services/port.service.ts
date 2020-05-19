@@ -16,7 +16,7 @@ export class PortService implements CrudService<Port, number> {
         this.token = token;
     }
     
-    public getAll(query?: Query, progressSubscriber?: Subscriber<ProgressEvent>): Observable<Array<Port>> { 
+    public getAll(query?: Query): Observable<Array<Port>> { 
         let request = RequestHelper.getRequest(
             urljoin(Config.serverUrl, 'port'),            
             'GET',
@@ -29,7 +29,7 @@ export class PortService implements CrudService<Port, number> {
         );
     }
 
-    public count(query?: Query, progressSubscriber?: Subscriber<ProgressEvent>): Observable<number> { 
+    public count(query?: Query): Observable<number> { 
         let request = RequestHelper.getRequest(
             urljoin(Config.serverUrl, 'port', 'count'),            
             'GET',
@@ -42,7 +42,7 @@ export class PortService implements CrudService<Port, number> {
         );
     }
 
-    public getById(id: number, query?: Query, progressSubscriber?: Subscriber<ProgressEvent>): Observable<Port> {
+    public getById(id: number, query?: Query): Observable<Port> {
          let request = RequestHelper.getRequest(
             urljoin(Config.serverUrl, 'port', id.toString()),            
             'GET',
@@ -55,15 +55,15 @@ export class PortService implements CrudService<Port, number> {
         );
     }
 
-    public createOrUpdate(model: Port, progressSubscriber?: Subscriber<ProgressEvent>): Observable<number> {
+    public createOrUpdate(model: Port): Observable<number> {
         if (!model['id']) {
-            return this.create(model, progressSubscriber);
+            return this.create(model);
         } else if (model['id']) {
-            return this.update(model, progressSubscriber);       
+            return this.update(model);       
         }
     }
 
-    public create(model: Port, progressSubscriber?: Subscriber<ProgressEvent>): Observable<number> {
+    public create(model: Port): Observable<number> {
         let request = RequestHelper.getRequest(
             urljoin(Config.serverUrl, 'port'),            
             'POST',
@@ -76,7 +76,7 @@ export class PortService implements CrudService<Port, number> {
         );
     }
 
-    public update(model: Port, progressSubscriber?: Subscriber<ProgressEvent>): Observable<number> {
+    public update(model: Port): Observable<number> {
         let request = RequestHelper.getRequest(
             urljoin(Config.serverUrl, 'port'),            
             'PUT',
@@ -89,7 +89,7 @@ export class PortService implements CrudService<Port, number> {
         );
     }
 
-    public deleteById(id: any, progressSubscriber?: Subscriber<ProgressEvent>): Observable<number> {
+    public deleteById(id: any): Observable<number> {
         let request = RequestHelper.getRequest(
             urljoin(Config.serverUrl, 'port', id.toString()),            
             'DELETE',

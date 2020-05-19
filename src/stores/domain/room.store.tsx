@@ -2,6 +2,8 @@ import { RootStore } from "../../core/store";
 import { Room } from "../../models/room";
 import { RoomService } from "../../services/room.service";
 import CrudStore, { CrudState } from "./crud.store";
+import { forkJoin } from "rxjs";
+import { runInAction } from "mobx";
 
 export default class RoomStore extends CrudStore<Room, number, RoomService> {    
     onLoading = {};
@@ -24,4 +26,27 @@ export default class RoomStore extends CrudStore<Room, number, RoomService> {
             this.entities[index].active = !entity.active;
         }
     }    
+
+    getRoomAndSchedule(roomId: number){
+        //debugger;
+        let scheduleService =  this.rootStore.scheduleStore.service;
+        let roomSubscription = this.service.getById(roomId);
+        let scheduleSubscription = scheduleService.getByRoomId(roomId);
+        forkJoin([roomSubscription, scheduleSubscription]).subscribe(
+            ([room, schedule]) => {
+                if(!room.isSchedule){
+                    schedule = Object.assign({}, schedule, {
+                        startAt: new Date(),
+                        endAt: new Date()
+                    })
+                }
+                runInAction(() => {                     
+                    console.log("room", room);
+                    console.log("schedule", schedule);
+                    this.setEntity(room),
+                    this.rootStore.scheduleStore.setEntity(schedule);
+                })
+            }
+        )
+    }
 }
